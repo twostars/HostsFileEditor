@@ -45,8 +45,16 @@ namespace HostsFileEditor
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        private static void Main()
+        private static void Main(string[] args)
         {
+            bool startMinimized = false;
+
+            if (args.Length > 0)
+            {
+                if (args[0].Equals("--start-minimized", StringComparison.CurrentCultureIgnoreCase))
+                    startMinimized = true;
+            }
+
             // Ensure only one copy of the application is running at a time
             using (var program = ProgramSingleInstance.Start())
             {
@@ -56,10 +64,10 @@ namespace HostsFileEditor
                     Application.SetCompatibleTextRenderingDefault(false);
                     Application.ThreadException += OnApplicationThreadException;
 
-                    mainForm = new MainForm();
+                    mainForm = new MainForm(startMinimized);
                     Application.Run(mainForm);
                 }
-                else
+                else if (!startMinimized)
                 {
                     program.ShowFirstInstance();
                 }

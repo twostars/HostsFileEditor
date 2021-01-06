@@ -68,6 +68,15 @@ namespace HostsFileEditor
         /// </summary>
         private bool ignoreAddingNew;
 
+        /// <summary>
+        /// Allows the form's visible property to be set.
+        /// </summary>
+        public bool AllowVisible
+        {
+            get;
+            set;
+        }
+
         #endregion
 
         #region Constructors and Destructors
@@ -75,7 +84,7 @@ namespace HostsFileEditor
         /// <summary>
         /// Initializes a new instance of the <see cref="MainForm"/> class.
         /// </summary>
-        public MainForm()
+        public MainForm(bool startMinimized = false)
         {
             this.InitializeComponent();
 
@@ -86,6 +95,10 @@ namespace HostsFileEditor
             this.columnComment.DefaultCellStyle.NullValue = null;
             this.columnIpAddress.DefaultCellStyle.NullValue = null;
             this.columnHostnames.DefaultCellStyle.NullValue = null;
+
+            // When starting minimized, we need to force the form to not show.
+            this.AllowVisible = !startMinimized;
+            this.UpdateHostsFileState();
         }
 
         #endregion
@@ -109,7 +122,25 @@ namespace HostsFileEditor
             }
 
             base.WndProc(ref message);
-        } 
+        }
+
+        /// <summary>
+        /// Overrides setting the form's visibility state.
+        /// </summary>
+        /// <param name="value">value indicating whether or not the form should be visible.</param>
+        protected override void SetVisibleCore(bool value)
+        {
+            if (!this.AllowVisible)
+            {
+                // We should still create its handle here.
+                if (value && !this.IsHandleCreated)
+                    CreateHandle();
+
+                value = false;
+            }
+
+            base.SetVisibleCore(value);
+        }
 
         /// <summary>
         /// Called when archive clicked.
@@ -329,6 +360,7 @@ namespace HostsFileEditor
         /// </param>
         private void OnEditClick(object sender, EventArgs e)
         {
+            this.AllowVisible = true;
             this.ShowOrActivate();
         }
 
@@ -428,8 +460,6 @@ namespace HostsFileEditor
 
             HostsFile.Instance.Entries.ResetBindings();
 
-            this.UpdateHostsFileState();
-
             // HACK: Make sure a newly added row gets committed after
             // the first cell is validated so HostsEntry validation and data
             // binding behaves correctly
@@ -462,7 +492,7 @@ namespace HostsFileEditor
                 };
         }
 
-        public void UpdateHostsFileState()
+        protected void UpdateHostsFileState()
         {
             bool checkState = !HostsFile.IsEnabled;
 
@@ -699,6 +729,7 @@ namespace HostsFileEditor
         /// </param>
         private void OnNotifyIconDoubleClick(object sender, EventArgs e)
         {
+            this.AllowVisible = true;
             this.ShowOrActivate();
         }
 
