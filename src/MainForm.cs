@@ -306,10 +306,6 @@ namespace HostsFileEditor
         {
             bool checkState = (sender as dynamic).Checked;
 
-            this.menuDisable.Checked = !checkState;
-            this.buttonDisable.Checked = !checkState;
-            this.menuContextDisable.Checked = !checkState;
-
             if (checkState)
             {
                 HostsFile.EnableHostsFile();
@@ -319,7 +315,7 @@ namespace HostsFileEditor
                 HostsFile.DisableHostsFile();
             }
 
-            this.UpdateNotifyIcon();
+            this.UpdateHostsFileState();
         }
 
         /// <summary>
@@ -401,7 +397,7 @@ namespace HostsFileEditor
         /// <param name="e">
         /// The event arguments.
         /// </param>
-        private void OnFomLoad(object sender, EventArgs e)
+        private void OnFormLoad(object sender, EventArgs e)
         {
             this.LoadSettings();
 
@@ -432,10 +428,7 @@ namespace HostsFileEditor
 
             HostsFile.Instance.Entries.ResetBindings();
 
-            this.menuDisable.Checked = !HostsFile.IsEnabled;
-            this.buttonDisable.Checked = !HostsFile.IsEnabled;
-
-            this.UpdateNotifyIcon();
+            this.UpdateHostsFileState();
 
             // HACK: Make sure a newly added row gets committed after
             // the first cell is validated so HostsEntry validation and data
@@ -469,6 +462,16 @@ namespace HostsFileEditor
                 };
         }
 
+        public void UpdateHostsFileState()
+        {
+            bool checkState = !HostsFile.IsEnabled;
+
+            this.menuDisable.Checked = checkState;
+            this.buttonDisable.Checked = checkState;
+            this.menuContextDisable.Checked = checkState;
+
+            this.UpdateNotifyIcon();
+        }
 
         /// <summary>
         /// Occurs when form is closing.

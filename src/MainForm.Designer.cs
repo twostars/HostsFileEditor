@@ -1157,7 +1157,7 @@ namespace HostsFileEditor
             this.Name = "MainForm";
             this.ShowInTaskbar = false;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
-            this.Load += new System.EventHandler(this.OnFomLoad);
+            this.Load += new System.EventHandler(this.OnFormLoad);
             this.Shown += new System.EventHandler(this.OnFormShown);
             this.ResizeEnd += new System.EventHandler(this.OnResizingEnd);
             this.VisibleChanged += new System.EventHandler(this.OnVisibleChanged);
